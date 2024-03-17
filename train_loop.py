@@ -1,11 +1,11 @@
 from tqdm.auto import tqdm
 
-def train_loop(dataloader, model, optimizer, loss_fn, lr_scheduler=None, epochs=25, device='cpu'):
+def train_loop(dataloader, model, optimizer, loss_fn, lr_scheduler=None, epochs=25, device='cpu', debug=False):
     model.to(device)
     loss_fn.to(device)
 
     avg_losses = []
-    print(f'Starting training loop. Epochs: {epochs}, batches: {len(dataloader)}')
+    print(f"Starting training loop for model '{model.__class__.__name__}'. Epochs: {epochs}, batches: {len(dataloader)}")
 
     # loop over the dataset multiple times
     for epoch in tqdm(range(epochs)):
@@ -34,12 +34,14 @@ def train_loop(dataloader, model, optimizer, loss_fn, lr_scheduler=None, epochs=
         
         # LR scheduler step
         if lr_scheduler:
-            print(f"Last lr: {lr_scheduler.get_last_lr()}")
+            if debug:
+                print(f"Last lr: {lr_scheduler.get_last_lr()}")
             lr_scheduler.step()
             
         avg_batch_loss = running_loss/len(dataloader)
         avg_losses.append({'epoch_num': epoch, 'avg_loss': avg_batch_loss.item()})
-        print(f'Total epoch[{epoch + 1}] loss: {running_loss}, Average batch loss: {avg_batch_loss}')
+        if debug:
+            print(f'Total epoch[{epoch + 1}] loss: {running_loss}, Average batch loss: {avg_batch_loss}')
 
-    print('Finished Training')
+    print(f'Finished training, last avg batch loss: {avg_batch_loss}')
     return avg_losses
