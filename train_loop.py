@@ -3,6 +3,7 @@ from tqdm.auto import tqdm
 def train_loop(dataloader, model, optimizer, loss_fn, lr_scheduler=None, epochs=25, device='cpu', debug=False):
     model.to(device)
     loss_fn.to(device)
+    model.train()
 
     avg_losses = []
     print(f"Starting training loop for model '{model.__class__.__name__}'. Epochs: {epochs}, batches: {len(dataloader)}")
